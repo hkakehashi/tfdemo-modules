@@ -108,7 +108,7 @@ The actions includes:
 
 - Validate Terraform files by running terraform commands.
 - Validate VCL using [falco](https://github.com/ysugimoto/falco).
-- Spin up a temp Fastly service and repeatedly send HTTP requests until the expected response is returned using [Terratest](https://github.com/gruntwork-io/terratest)
+- Spin up a temporary Fastly service using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTP requests until the expected response is returned.
 
 ## Credentials
 
