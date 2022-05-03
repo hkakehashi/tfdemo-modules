@@ -3,8 +3,8 @@ name: "cert module test"
 on:
   pull_request:
     branches: [main]
-    path:
-      - cert/**
+    paths:
+      - "cert/**"
   workflow_dispatch:
 
 jobs:
