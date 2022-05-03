@@ -27,7 +27,7 @@ locals {
 }
 
 module "service" {
-  source          = "github.com/hkakehashi/tfdemo-modules//service?ref=v1.0.0"
+  source          = "github.com/hkakehashi/tfdemo-modules//service?ref=v1.0.3"
   domain          = local.domain
   papertrail_addr = local.papertrail_addr
   papertrail_port = local.papertrail_port
@@ -35,7 +35,7 @@ module "service" {
 
 module "cert" {
   depends_on = [module.service]
-  source     = "github.com/hkakehashi/tfdemo-modules//cert?ref=v1.0.0"
+  source     = "github.com/hkakehashi/tfdemo-modules//cert?ref=v1.0.3"
   domains    = [local.domain]
   dns_zone   = local.dns_zone
 }
@@ -104,7 +104,7 @@ This repository contains a GitHub Actions workflow for testing Terraform code. T
 - a pull request containing changes to `service/*` or `cert/*` is opened in the main branch.
 - a workflow_dispatch is triggered manually.
 
-The actions includes:
+The steps include:
 
 - Validate Terraform files by running terraform commands.
 - Validate VCL using [falco](https://github.com/ysugimoto/falco).
