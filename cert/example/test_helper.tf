@@ -1,8 +1,12 @@
 resource "fastly_service_vcl" "service" {
   name = "Test service for Terratest"
 
-  domain {
-    name = "terratest.hkakehas.tokyo"
+  dynamic "domain" {
+    for_each = local.domains
+
+    content {
+      name = domain.value
+    }
   }
 
   backend {

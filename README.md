@@ -36,7 +36,7 @@ module "service" {
 module "cert" {
   depends_on = [module.service]
   source     = "github.com/hkakehashi/tfdemo-modules//cert?ref=v1.0.0"
-  domain     = local.domain
+  domains    = [local.domain]
   dns_zone   = local.dns_zone
 }
 
@@ -153,7 +153,7 @@ This module is responsible for deploying a Fastly VCL service.
 
 ### cert
 
-This module is responsible for issuing and deploying certificates, and adding DNS records. 2 DNS records are created: one to verify the ownership of the domain, which is necessary for issuing certificates, and the other to point requests to Fastly.
+This module is responsible for issuing and deploying certificates, and adding DNS records. 2 DNS records are created for each domain: one to verify the ownership of the domain, which is necessary for issuing certificates, and the other to point requests to Fastly.
 
 **Resources**
 
@@ -168,15 +168,15 @@ This module is responsible for issuing and deploying certificates, and adding DN
 
 **Inputs**
 
-| Name       | Description                                   | Type     | Default      | Required |
-| ---------- | --------------------------------------------- | -------- | ------------ | :------: |
-| dns_zone   | Name of the hosted zone                       | `string` | n/a          |   yes    |
-| domain     | The domain that the service will respond to   | `string` | n/a          |   yes    |
-| tls_config | TLS configuration to be enabled on the domain | `string` | `"TLS v1.3"` |    no    |
+| Name       | Description                                   | Type          | Default      | Required |
+| ---------- | --------------------------------------------- | ------------- | ------------ | :------: |
+| dns_zone   | Name of the hosted zone                       | `string`      | n/a          |   yes    |
+| domains    | The set of domains to enable TLS              | `set(string)` | n/a          |   yes    |
+| tls_config | TLS configuration to be enabled on the domain | `string`      | `"TLS v1.3"` |    no    |
 
 **Outputs**
 
 | Name      | Subfield Name                                   |
 | --------- | ----------------------------------------------- |
 | cert_info | domain, created_at, updated_at, tls_config_name |
-| dns_info  | name, type, record, ttl                         |
+| dns_info  | n/a                                             |
