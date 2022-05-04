@@ -9,6 +9,7 @@ on:
 
 jobs:
   lint:
+    name: "Lint"
     runs-on: ubuntu-latest
     env:
       TF_LOG: INFO
@@ -31,7 +32,8 @@ jobs:
       - run: terraform validate -no-color
 
   unit-test:
-    needs: validation
+    name: "Unit test"
+    needs: lint
     runs-on: ubuntu-latest
     defaults:
       run:
