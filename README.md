@@ -34,7 +34,6 @@ module "service" {
 }
 
 module "cert" {
-  depends_on = [module.service]
   source     = "github.com/hkakehashi/tfdemo-modules//cert?ref=v1.0.3"
   domains    = [local.domain]
   dns_zone   = local.dns_zone
