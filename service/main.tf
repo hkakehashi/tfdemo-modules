@@ -21,6 +21,22 @@ resource "fastly_service_vcl" "service" {
     main    = true
   }
 
+  # Custom 404
+  snippet {
+    content  = file("${path.module}/vcl/snippet_fetch_custom_404.vcl")
+    name     = "fetch_custom_404"
+    type     = "fetch"
+    priority = 100
+  }
+
+  snippet {
+    content = templatefile("${path.module}/vcl/snippet_error_custom_404.vcl",
+    { html = file("${path.module}/html/custom_404.html") })
+    name     = "error_custom_404"
+    type     = "error"
+    priority = 100
+  }
+
   # WAF settings
   dynamic "condition" {
     for_each = var.enable_waf ? [1] : []
@@ -84,7 +100,7 @@ resource "fastly_service_vcl" "service" {
       name     = "Fastly_WAF_Snippet"
       type     = "recv"
       priority = 10
-      content  = file("${path.module}/vcl/snippet_Fastly_WAF_Snippet.vcl")
+      content  = file("${path.module}/vcl/snippet_recv_fastly_waf.vcl")
     }
   }
 
@@ -95,7 +111,7 @@ resource "fastly_service_vcl" "service" {
       name     = "fastly_csi_init"
       type     = "recv"
       priority = 5
-      content  = file("${path.module}/vcl/snippet_fastly_csi_init.vcl")
+      content  = file("${path.module}/vcl/snippet_recv_fastly_csi_init.vcl")
     }
   }
 
