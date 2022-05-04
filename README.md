@@ -8,7 +8,7 @@ This repo includes:
 
 The example module adds DNS records to Route 53.
 
-The two live services hosted in [the live repository](https://github.com/hkakehashi/tfdemo-live) both use the `service` module, but in different versions using the `ref` argument of the `module source`.
+The two live services hosted in [the live repository](https://github.com/hkakehashi/tfdemo-live) both use the `service` module, but in different versions using the module source `ref` argument.
 
 **Image of the file structure**
 
