@@ -45,7 +45,7 @@ jobs:
 
   unit-test:
     name: "Unit test"
-    needs: validation
+    needs: lint
     runs-on: ubuntu-latest
     defaults:
       run:
