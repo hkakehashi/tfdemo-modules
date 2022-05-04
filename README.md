@@ -14,18 +14,17 @@ The two live services hosted in [the live repository](https://github.com/hkakeha
 
 ```
 ├── live
-│   ├── cert
-│   │   ├── main.tf
-│   │   └── provider.tf
-│   └── service
-│       ├── prod              <------------------ Using v1.0.0 (Minimal configuration)
-│       │   ├── main.tf
-│       │   └── provider.tf
-│       └── stage             <------------------ Using v1.1.0 (Additional features enabled)
-│           ├── main.tf
-│           └── provider.tf
-└── modules
-    ├── cert                  <------------------ This repository
+│   ├── global
+│   │   └── cert
+│   │       └── main.tf
+│   ├── prod                  <------------------ Using v1.0.0 (Minimal configuration)
+│   │   └── service
+│   │       └── main.tf
+│   └── stage                 <------------------ Using v1.1.0 (Additional features enabled)
+│       └── service
+│           └── main.tf
+└── modules                   <------------------ This repository
+    ├── cert
     │   ├── main.tf
     │   ├── output.tf
     │   ├── provider.tf
@@ -46,13 +45,13 @@ The two live services hosted in [the live repository](https://github.com/hkakeha
 
 - Pull Requests to the main branch containing changes to `service/*`
 
-  - Lint Terraform files by running terraform commands
+  - Validate Terraform files by running terraform commands
   - Lint VCL files using [falco](https://github.com/ysugimoto/falco)
   - Spin up Terraform resources defined in `service/example` using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTP requests until the expected response is returned.
 
 - Pull Requests to the main branch containing changes to `cert/*`
 
-  - Lint Terraform files by running terraform commands
+  - Validate Terraform files by running terraform commands
   - Spin up Terraform resources defined in `cert/example` using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTPS requests until the expected response is returned.
 
 These actions can also be run with the workflow_dispatch event.

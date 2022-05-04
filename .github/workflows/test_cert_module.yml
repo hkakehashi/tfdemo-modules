@@ -9,7 +9,7 @@ on:
 
 jobs:
   lint:
-    name: "Lint"
+    name: "Validation"
     runs-on: ubuntu-latest
     env:
       TF_LOG: INFO
