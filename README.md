@@ -44,13 +44,13 @@ The two live services hosted in [the live repository](https://github.com/hkakeha
 
 ### Triggers and actions
 
-- Pull Requests to the main branch containing changes to `service/*
+- Pull Requests to the main branch containing changes to `service/*`
 
   - Lint Terraform files by running terraform commands
   - Lint VCL files using [falco](https://github.com/ysugimoto/falco)
   - Spin up Terraform resources defined in `service/example` using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTP requests until the expected response is returned.
 
-- Pull Requests to the main branch containing changes to `cert/*
+- Pull Requests to the main branch containing changes to `cert/*`
 
   - Lint Terraform files by running terraform commands
   - Spin up Terraform resources defined in `cert/example` using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTPS requests until the expected response is returned.
