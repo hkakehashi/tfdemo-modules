@@ -1,8 +1,12 @@
-# Example Terraform module for Fastly
+# Fastly - Terraform Demo<br>Example Repository for Terraform Modules
 
-Example Terraform modules that creates a Fastly service, issues and deploys a certificate, and adds DNS records to point traffic to Fastly. Once the changes are completed successfully, the Fastly service will be ready to process requests over HTTPS.
+This repo includes:
 
-In this example, we assume that the DNS records are added to Route 53.
+- Terraform module for deploying Fastly services
+- Terraform module for deploying certificates and adding DNS records to point traffic to Fastly
+- GitHub Actions workflows for testing the modules
+
+The example module adds DNS records to Route 53.
 
 ## Usage in a local environment
 
@@ -91,16 +95,20 @@ The two live services hosted in [the demo repository](https://github.com/hkakeha
 
 ## Github Actions workflow
 
-This repository contains a GitHub Actions workflow for testing Terraform code. The workflow is triggered when:
+### Triggers and actions
 
-- a pull request containing changes to `service/*` or `cert/*` is opened in the main branch.
-- a workflow_dispatch is triggered manually.
+- Pull Requests to the main branch containing changes to `service/*
 
-The steps include:
+  - Lint Terraform files by running terraform commands
+  - Lint VCL files using [falco](https://github.com/ysugimoto/falco)
+  - Spin up Terraform resources defined in `service/example` using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTP requests until the expected response is returned.
 
-- Validate Terraform files by running terraform commands.
-- Validate VCL using [falco](https://github.com/ysugimoto/falco).
-- Spin up a temporary Fastly service using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTP requests until the expected response is returned.
+- Pull Requests to the main branch containing changes to `cert/*
+
+  - Lint Terraform files by running terraform commands
+  - Spin up Terraform resources defined in `cert/example` using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTPS requests until the expected response is returned.
+
+These actions can also be run with the workflow_dispatch event.
 
 ## Credentials
 
