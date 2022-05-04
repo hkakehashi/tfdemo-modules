@@ -1,20 +1,21 @@
-name: "cert module test"
+name: "Test service module"
 
 on:
   pull_request:
     branches: [main]
     paths:
-      - "cert/**"
+      - "service/**"
   workflow_dispatch:
 
 jobs:
-  validation:
+  lint:
+    name: "Lint"
     runs-on: ubuntu-latest
     env:
       TF_LOG: INFO
     defaults:
       run:
-        working-directory: ./cert
+        working-directory: ./service
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
@@ -30,12 +31,25 @@ jobs:
       - run: terraform init
       - run: terraform validate -no-color
 
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Setup VCL linter
+        run: go install github.com/ysugimoto/falco/cmd/falco@latest
+
+      - name: Run VCL linter
+        run: falco -I . -vv *
+        working-directory: ./service/vcl
+
   unit-test:
+    name: "Unit test"
     needs: validation
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./cert/test
+        working-directory: ./service/test
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
