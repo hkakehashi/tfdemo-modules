@@ -58,10 +58,7 @@ For modules hosted at Github, Terraform will clone and use the default branch by
 
 ### Supporting multiple environments with module versioning
 
-The following two repositories both use this module but in different versions. These demo repositories are configured to run Terraform with a Github Actions workflow on events such as Push/PR.
-
-- [prod](https://github.com/hkakehashi/tfdemo-live/prod) ----- Fastly service with minimal configuration.
-- [stage](https://github.com/hkakehashi/tfdemo-live/stage) ---- Fastly service with additional features enabled.
+The two live services hosted in [the demo repository](https://github.com/hkakehashi/tfdemo-live) both use this module, but in different versions. The demo repository is configured to run Terraform with Github Actions on events such as Push/PR.
 
 **Image of the file structure**
 
@@ -86,15 +83,11 @@ The following two repositories both use this module but in different versions. T
 │           └── snippet_fastly_csi_init.vcl
 └── live
     ├── prod
-    │   ├── main.tf
-    │   ├── provider.tf        <------------------ Using v1.0.0 (Minimal configuration)
-    │   ├── input.tfvars
-    │   └── variables.tf
+    │   ├── main.tf            <------------------ Using v1.0.0 (Minimal configuration)
+    │   └── provider.tf
     └── dev
-        ├── main.tf
-        ├── provider.tf        <------------------ Using v1.1.0 (Additional features enabled)
-        ├── input.tfvars
-        └── variables.tf
+        ├── main.tf            <------------------ Using v1.1.0 (Additional features enabled)
+        └── provider.tf
 ```
 
 ## Github Actions workflow
