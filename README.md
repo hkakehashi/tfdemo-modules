@@ -2,11 +2,60 @@
 
 This repo includes:
 
-- Terraform module for deploying Fastly services
-- Terraform module for deploying certificates and adding DNS records to point traffic to Fastly
+- `service` module for deploying Fastly services
+- `cert` module for deploying certificates and adding DNS records to point traffic to Fastly
 - GitHub Actions workflows for testing the modules
 
 The example module adds DNS records to Route 53.
+
+The two live services hosted in [the live repository](https://github.com/hkakehashi/tfdemo-live) both use the `service` module, but in different versions using the `ref` argument of the `module source`.
+
+**Image of the file structure**
+
+```
+├── live
+│   ├── cert
+│   │   ├── main.tf
+│   │   └── provider.tf
+│   └── service
+│       ├── prod              <------------------ Using v1.0.0 (Minimal configuration)
+│       │   ├── main.tf
+│       │   └── provider.tf
+│       └── stage             <------------------ Using v1.1.0 (Additional features enabled)
+│           ├── main.tf
+│           └── provider.tf
+└── modules
+    ├── cert                  <------------------ This repository
+    │   ├── main.tf
+    │   ├── output.tf
+    │   ├── provider.tf
+    │   └── variables.tf
+    └── service
+        ├── main.tf
+        ├── output.tf
+        ├── provider.tf
+        ├── variables.tf
+        └── vcl
+            ├── main.vcl
+            └── snippet.vcl
+```
+
+## Github Actions workflow
+
+### Triggers and actions
+
+- Pull Requests to the main branch containing changes to `service/*
+
+  - Lint Terraform files by running terraform commands
+  - Lint VCL files using [falco](https://github.com/ysugimoto/falco)
+  - Spin up Terraform resources defined in `service/example` using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTP requests until the expected response is returned.
+
+- Pull Requests to the main branch containing changes to `cert/*
+
+  - Lint Terraform files by running terraform commands
+  - Spin up Terraform resources defined in `cert/example` using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTPS requests until the expected response is returned.
+
+These actions can also be run with the workflow_dispatch event.
 
 ## Usage in a local environment
 
@@ -54,61 +103,6 @@ Then...
 terraform init
 terraform apply
 ```
-
-## About module versioning
-
-For modules hosted at Github, Terraform will clone and use the default branch by default. You can override this using the `ref` argument to use a specific commit as the source to change the version of the module depending on the environment. In the example above, we use the tag name.
-
-### Supporting multiple environments with module versioning
-
-The two live services hosted in [the demo repository](https://github.com/hkakehashi/tfdemo-live) both use this module, but in different versions. The demo repository is configured to run Terraform with Github Actions on events such as Push/PR.
-
-**Image of the file structure**
-
-```
-├── modules                    <------------------ This repository
-│   ├── cert
-│   │   ├── main.tf
-│   │   ├── output.tf
-│   │   ├── provider.tf
-│   │   └── variables.tf
-│   └── service
-│       ├── main.tf
-│       ├── output.tf
-│       ├── provider.tf
-│       ├── variables.tf
-│       ├── log_format
-│       │   ├── waflogs.json
-│       │   └── weblogs.json
-│       └── vcl
-│           ├── main.vcl
-│           ├── snippet_Fastly_WAF_Snippet.vcl
-│           └── snippet_fastly_csi_init.vcl
-└── live
-    ├── prod
-    │   ├── main.tf            <------------------ Using v1.0.0 (Minimal configuration)
-    │   └── provider.tf
-    └── dev
-        ├── main.tf            <------------------ Using v1.1.0 (Additional features enabled)
-        └── provider.tf
-```
-
-## Github Actions workflow
-
-### Triggers and actions
-
-- Pull Requests to the main branch containing changes to `service/*
-
-  - Lint Terraform files by running terraform commands
-  - Lint VCL files using [falco](https://github.com/ysugimoto/falco)
-  - Spin up Terraform resources defined in `service/example` using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTP requests until the expected response is returned.
-
-- Pull Requests to the main branch containing changes to `cert/*
-
-  - Lint Terraform files by running terraform commands
-  - Spin up Terraform resources defined in `cert/example` using [Terratest](https://github.com/gruntwork-io/terratest) and repeatedly send HTTPS requests until the expected response is returned.
-
-These actions can also be run with the workflow_dispatch event.
 
 ## Credentials
 
