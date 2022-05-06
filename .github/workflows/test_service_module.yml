@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
+  validation:
     name: "Validation"
     runs-on: ubuntu-latest
     env:
@@ -52,7 +52,7 @@ jobs:
 
   unit-test:
     name: "Unit test"
-    needs: lint
+    needs: validation
     runs-on: ubuntu-latest
     defaults:
       run:
