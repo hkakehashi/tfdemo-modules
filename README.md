@@ -6,7 +6,7 @@ This repo includes:
 - `cert` module for deploying certificates and adding DNS records to point traffic to Fastly
 - GitHub Actions workflows for testing the modules
 
-The example module adds DNS records to Route 53.
+The example module adds required DNS records to Route 53.
 
 The two live services hosted in [the live repository](https://github.com/hkakehashi/tfdemo-live) both use the `service` module, but in different versions using the module source `ref` argument.
 
