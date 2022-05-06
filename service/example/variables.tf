@@ -1,3 +1,8 @@
+variable "dns_zone" {
+  type        = string
+  description = "Name of the hosted zone"
+}
+
 variable "domain" {
   type        = string
   description = "The domain that the service will respond to"

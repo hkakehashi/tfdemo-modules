@@ -74,19 +74,15 @@ provider "aws" {
 locals {
   domain          = "example.hkakehas.tokyo"
   dns_zone        = "hkakehas.tokyo"
-  papertrail_addr = "xxx.papertrailapp.com"
-  papertrail_port = 12345
 }
 
 module "service" {
-  source          = "github.com/hkakehashi/tfdemo-modules//service?ref=v1.0.3"
+  source          = "github.com/hkakehashi/tfdemo-modules//service?ref=v1.2.0"
   domain          = local.domain
-  papertrail_addr = local.papertrail_addr
-  papertrail_port = local.papertrail_port
 }
 
 module "cert" {
-  source     = "github.com/hkakehashi/tfdemo-modules//cert?ref=v1.0.3"
+  source     = "github.com/hkakehashi/tfdemo-modules//cert?ref=v1.2.0"
   domains    = [local.domain]
   dns_zone   = local.dns_zone
 }
@@ -123,20 +119,20 @@ This module is responsible for deploying a Fastly VCL service.
 
 **Resources**
 
-| Name                                                                                                                                          | Type        |
-| --------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [fastly_service_vcl.service](https://registry.terraform.io/providers/fastly/fastly/latest/docs/resources/service_vcl)                         | resource    |
-| [fastly_service_waf_configuration.waf](https://registry.terraform.io/providers/fastly/fastly/latest/docs/resources/service_waf_configuration) | resource    |
-| [fastly_waf_rules.default](https://registry.terraform.io/providers/fastly/fastly/latest/docs/data-sources/waf_rules)                          | data source |
+| Name                                                                                                                                  | Type     |
+| ------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| [fastly_service_vcl.service](https://registry.terraform.io/providers/fastly/fastly/latest/docs/resources/service_vcl)                 | resource |
+| [fastly_service_acl_entries.entries](https://registry.terraform.io/providers/fastly/fastly/latest/docs/resources/service_acl_entries) | resource |
 
 **Inputs**
 
-| Name            | Description                                                                                    | Type     | Default | Required |
-| --------------- | ---------------------------------------------------------------------------------------------- | -------- | ------- | :------: |
-| domain          | The domain that the service will respond to                                                    | `string` | n/a     |   yes    |
-| enable_waf      | Provision a WAF object with pre-determine rules, OWASP config, response, and logging endpoints | `bool`   | `false` |    no    |
-| papertrail_addr | The hostname of the logging endpoint                                                           | `string` | n/a     |   yes    |
-| papertrail_port | The port number of the logging endpoint                                                        | `number` | n/a     |   yes    |
+| Name            | Description                                              | Type                                                                                     | Default | Required |
+| --------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------- | :------: |
+| domain          | The domain that the service will respond to              | `string`                                                                                 | n/a     |   yes    |
+| papertrail_addr | The hostname of the logging endpoint                     | `string`                                                                                 | `""`    |    no    |
+| papertrail_port | The port number of the logging endpoint                  | `number`                                                                                 | `0`     |    no    |
+| enable_acl      | Restrict IPs allowed to access the Fastly service        | `bool`                                                                                   | `false` |    no    |
+| allowed_ips     | Set of IP addresses allowed to access the Fastly service | <pre>set(object({<br> ip = string<br> subnet = number<br> comment = string<br> }))</pre> | `[]`    |    no    |
 
 **Outputs**
 
