@@ -1,3 +1,4 @@
+// Terraform resources that the test depends on
 resource "fastly_service_vcl" "service" {
   name = "Test service for Terratest"
 

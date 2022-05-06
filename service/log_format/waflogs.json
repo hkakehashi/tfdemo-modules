@@ -1,9 +1,0 @@
-{
-  "type": "waf",
-  "request_id": "%{req.http.fastly-soc-x-request-id}V",
-  "rule_id": "%{waf.rule_id}V",
-  "severity": "%{waf.severity}V",
-  "anomaly_score": "%{waf.anomaly_score}V",
-  "logdata": "%{cstr_escape(waf.logdata)}V",
-  "waf_message": "%{waf.message}V"
-}

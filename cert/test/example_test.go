@@ -11,22 +11,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWebServerHttpRequest(t *testing.T) {
+func TestCertModule(t *testing.T) {
 	opt := terraform.WithDefaultRetryableErrors(
 		t,
-		&terraform.Options{TerraformDir: "../example"},
+		&terraform.Options{
+			TerraformDir: "../example",
+		},
 	)
 	defer terraform.Destroy(t, opt)
 
 	terraform.InitAndApply(t, opt)
 
-	domains := terraform.OutputList(
-		t,
-		opt,
-		"domains",
-	)
+	domains := terraform.OutputList(t, opt, "domains")
 
 	assert.Equal(t, len(domains), 2)
+
+	expectedStatus := 200
+	expectedBody := ""
+	maxRetries := 30
+	sleepBetweenRetries := 5 * time.Second
 
 	for _, domain := range domains {
 		url := fmt.Sprintf("https://%s/status/200", domain)
@@ -36,10 +39,10 @@ func TestWebServerHttpRequest(t *testing.T) {
 			t,
 			url,
 			&tls.Config{},
-			200,           // expectedStatus
-			"",            // expectedBody
-			30,            // retries
-			5*time.Second, // sleepBetweenRetries
+			expectedStatus,
+			expectedBody,
+			maxRetries,
+			sleepBetweenRetries,
 		)
 	}
 }

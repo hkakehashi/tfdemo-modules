@@ -37,149 +37,57 @@ resource "fastly_service_vcl" "service" {
     priority = 100
   }
 
-  # WAF settings
-  dynamic "condition" {
-    for_each = var.enable_waf ? [1] : []
-
-    content {
-      name      = "WAF_Prefetch"
-      priority  = 10
-      statement = "req.backend.is_origin && !req.http.rqpass"
-      type      = "PREFETCH"
-    }
-  }
-
-  dynamic "condition" {
-    for_each = var.enable_waf ? [1] : []
-
-    content {
-      name      = "waf-soc-logging"
-      priority  = 10
-      statement = "waf.executed"
-      type      = "RESPONSE"
-    }
-  }
-
-  dynamic "condition" {
-    for_each = var.enable_waf ? [1] : []
-
-    content {
-      name      = "false"
-      priority  = 10
-      statement = "!req.url"
-      type      = "REQUEST"
-    }
-  }
-
-  dynamic "response_object" {
-    for_each = var.enable_waf ? [1] : []
-
-    content {
-      name              = "WAF_Response"
-      response          = "Forbidden"
-      status            = "403"
-      content           = "{ \"Access Denied\" : \"\"} req.http.fastly-soc-x-request-id {\"\" }"
-      content_type      = "application/json"
-      request_condition = "false"
-    }
-  }
-
-  dynamic "waf" {
-    for_each = var.enable_waf ? [1] : []
-
-    content {
-      prefetch_condition = "WAF_Prefetch"
-      response_object    = "WAF_Response"
-    }
-  }
-
+  // Conditionally add ACL
   dynamic "snippet" {
-    for_each = var.enable_waf ? [1] : []
+    for_each = var.enable_acl ? [1] : []
 
     content {
-      name     = "Fastly_WAF_Snippet"
+      content  = file("${path.module}/vcl/snippet_recv_acl.vcl")
+      name     = "recv_acl"
       type     = "recv"
-      priority = 10
-      content  = file("${path.module}/vcl/snippet_recv_fastly_waf.vcl")
+      priority = 90
     }
   }
 
-  dynamic "snippet" {
-    for_each = var.enable_waf ? [1] : []
+  dynamic "acl" {
+    for_each = var.enable_acl ? [1] : []
 
     content {
-      name     = "fastly_csi_init"
-      type     = "recv"
-      priority = 5
-      content  = file("${path.module}/vcl/snippet_recv_fastly_csi_init.vcl")
+      name          = "allow_list"
+      force_destroy = true
     }
   }
 
+  // Conditionally add Papertrail logging endpoint
   dynamic "logging_papertrail" {
-    for_each = var.enable_waf ? [1] : []
+    for_each = var.papertrail_addr != "" && var.papertrail_port != 0 ? [1] : []
 
     content {
-      name               = "weblogs"
-      address            = var.papertrail_addr
-      port               = var.papertrail_port
-      format             = file("${path.module}/log_format/weblogs.json")
-      format_version     = "2"
-      response_condition = "waf-soc-logging"
-    }
-  }
-
-  dynamic "logging_papertrail" {
-    for_each = var.enable_waf ? [1] : []
-
-    content {
-      name           = "waflogs"
+      name           = "accesslog"
       address        = var.papertrail_addr
       port           = var.papertrail_port
-      format         = file("${path.module}/log_format/waflogs.json")
+      format         = file("${path.module}/log_format/format.json")
       format_version = "2"
-      placement      = "waf_debug"
     }
   }
 }
 
-# WAF resource settings
-data "fastly_waf_rules" "default" {
-  tags                    = ["owasp", "application-multi"]
-  exclude_modsec_rule_ids = [4112031, 4112011, 4112012]
-}
+# ACL entries
+resource "fastly_service_acl_entries" "entries" {
+  count = length(var.allowed_ips) != 0 ? 1 : 0
 
-variable "type_status" {
-  type = map(string)
-  default = {
-    score     = "score"
-    threshold = "log"
-    strict    = "log"
-  }
-}
+  service_id     = fastly_service_vcl.service.id
+  acl_id         = one(fastly_service_vcl.service.acl).acl_id
+  manage_entries = true
 
-resource "fastly_service_waf_configuration" "waf" {
-  count = var.enable_waf ? 1 : 0
+  dynamic "entry" {
+    for_each = var.allowed_ips
 
-  waf_id                           = fastly_service_vcl.service.waf[0].waf_id
-  http_violation_score_threshold   = 5
-  inbound_anomaly_score_threshold  = 15
-  lfi_score_threshold              = 5
-  php_injection_score_threshold    = 5
-  rce_score_threshold              = 5
-  rfi_score_threshold              = 5
-  session_fixation_score_threshold = 5
-  sql_injection_score_threshold    = 15
-  xss_score_threshold              = 15
-  allowed_request_content_type     = "application/x-www-form-urlencoded|multipart/form-data|text/xml|application/xml|application/x-amf|application/json|text/plain"
-  arg_name_length                  = 800
-  arg_length                       = 2000
-  paranoia_level                   = 3
-
-  dynamic "rule" {
-    for_each = data.fastly_waf_rules.default.rules
     content {
-      modsec_rule_id = rule.value.modsec_rule_id
-      status         = lookup(var.type_status, rule.value.type, "log")
+      ip      = entry.value.ip
+      subnet  = entry.value.subnet
+      comment = entry.value.comment
+      negated = false
     }
   }
 }
