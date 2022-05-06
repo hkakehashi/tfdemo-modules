@@ -10,7 +10,7 @@ The example module adds required DNS records to Route 53.
 
 The two live services hosted in [the live repository](https://github.com/hkakehashi/tfdemo-live) both use the `service` module, but in different versions using the module source `ref` argument.
 
-**Image of the file structure**
+**Image of the file and directory layout**
 
 ```
 ├── live
