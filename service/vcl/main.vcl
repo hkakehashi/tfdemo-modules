@@ -1,4 +1,7 @@
 sub vcl_recv {
+  if ( req.request == "FASTLYPURGE" ) {
+      set req.http.Fastly-Purge-Requires-Auth = "1";
+  }
 #FASTLY recv
 
   # Normally, you should consider requests other than GET and HEAD to be uncacheable
