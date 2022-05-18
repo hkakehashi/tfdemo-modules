@@ -40,7 +40,7 @@ The two live services hosted in [the live repository](https://github.com/hkakeha
 ```
 
 **Development workflow image**
-![devworkflow](https://user-images.githubusercontent.com/30490956/168985613-f033f6be-5a66-4928-8acf-ccd4ae590f4c.jpg)
+![devworkflow](https://user-images.githubusercontent.com/30490956/169046058-672f7b73-957e-4c27-acb3-49a45e1da7ab.jpg)
 
 ## Github Actions workflow
 
