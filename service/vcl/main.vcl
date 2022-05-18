@@ -1,6 +1,6 @@
 sub vcl_recv {
   if ( req.request == "FASTLYPURGE" ) {
-      set req.http.Fastly-Purge-Requires-Auth = "1"
+      set req.http.Fastly-Purge-Requires-Auth = "1";
   }
 #FASTLY recv
 
