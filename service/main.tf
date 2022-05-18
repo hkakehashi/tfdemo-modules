@@ -21,6 +21,13 @@ resource "fastly_service_vcl" "service" {
     main    = true
   }
 
+  snippet {
+    content  = file("${path.module}/vcl/snippet_recv_purge_auth.vcl")
+    name     = "recv_purge_auth"
+    type     = "recv"
+    priority = 100
+  }
+
   # Custom 404
   snippet {
     content  = file("${path.module}/vcl/snippet_fetch_custom_404.vcl")
