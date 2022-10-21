@@ -21,22 +21,6 @@ resource "fastly_service_vcl" "service" {
     main    = true
   }
 
-  # Custom 404
-  snippet {
-    content  = file("${path.module}/vcl/snippet_fetch_custom_404.vcl")
-    name     = "fetch_custom_404"
-    type     = "fetch"
-    priority = 100
-  }
-
-  snippet {
-    content = templatefile("${path.module}/vcl/snippet_error_custom_404.vcl",
-    { html = file("${path.module}/html/custom_404.html") })
-    name     = "error_custom_404"
-    type     = "error"
-    priority = 100
-  }
-
   // Conditionally add ACL
   dynamic "snippet" {
     for_each = var.enable_acl ? [1] : []
