@@ -1,6 +1,6 @@
 locals {
-  domains    = ["terratest-prod1.hkakehas.tokyo", "terratest-stage1.hkakehas.tokyo"]
-  dns_zone   = "hkakehas.tokyo"
+  domains    = ["terratest-prod1.hrmsk66.com", "terratest-stage1.hrmsk66.com"]
+  dns_zone   = "hrmsk66.com"
   tls_config = "HTTP/3 & TLS v1.3"
 }
 

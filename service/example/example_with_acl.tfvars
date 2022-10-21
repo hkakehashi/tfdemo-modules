@@ -1,5 +1,5 @@
-dns_zone        = "hkakehas.tokyo"
-domain          = "terratest.hkakehas.tokyo"
+dns_zone        = "hrmsk66.com"
+domain          = "terratest.hrmsk66.com"
 papertrail_addr = "xxx.papertrailapp.com"
 papertrail_port = 12345
 enable_acl      = true
