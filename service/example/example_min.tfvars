@@ -1,2 +1,2 @@
-dns_zone = "hkakehas.tokyo"
-domain   = "terratest.hkakehas.tokyo"
+dns_zone = "hrmsk66.com"
+domain   = "terratest.hrmsk66.com"

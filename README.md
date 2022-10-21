@@ -75,8 +75,8 @@ provider "aws" {
 }
 
 locals {
-  domain          = "example.hkakehas.tokyo"
-  dns_zone        = "hkakehas.tokyo"
+  domain          = "example.hrmsk66.com"
+  dns_zone        = "hrmsk66.com"
 }
 
 module "service" {
